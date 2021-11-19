@@ -42,7 +42,7 @@ class App extends Component {
     } else if(this.state.email.length === 0 ){
       alert(`Input is not valid. (Must enter email)`)
     } else {
-      alert(`Purchase complete! You will be charged $${formatPrice(this.state.totalPrice)}`)
+      alert(`Purchase complete! You will be charged $${formatPrice(this.state.totalPrice) + formatPrice(this.state.totalPrice) * 0.05}`)
     }
   }
 
@@ -82,7 +82,7 @@ class App extends Component {
     let productsArr = this.state.productsList.map((product) => {
       let { name, price, img, description} = product
       return(
-        <div key={ product.name } className="product-info-container">
+        <div key={ product.name }>
           <div>{ name }</div>
           <br />
           <div>{ formatPrice(price) }</div>
@@ -97,8 +97,8 @@ class App extends Component {
 
     let checkoutCartArr = this.state.cart.map((product) => {
       return(
-        <div key={ product.name }>
-          <li>{product.name, product.price}</li>
+        <div key={ product.name, product.price }>
+          <li>{`${product.name}: ${formatPrice(product.price)}`}</li>
         </div>
       )
     })
@@ -107,13 +107,13 @@ class App extends Component {
       <div>
         <h2>My Garage Sale</h2>
 
-        <div id="product-list-container">{ productsArr }</div>
+        <div className="products">{ productsArr }</div>
 
         <h2>Cart</h2>
         <ul>{checkoutCartArr}</ul>
         <h3>Subtotal: {formatPrice(this.state.subtotal)}</h3>
-        <h3>Tax: {formatPrice(this.state.tax)}</h3>
-        <h3>Total: {formatPrice((this.state.subtotal + this.state.totalPrice))}</h3>
+        <h3>Tax: {formatPrice(this.state.totalPrice) * 0.05}</h3>
+        <h3>Total: {formatPrice((this.state.totalPrice) + formatPrice(this.state.totalPrice) * 0.05)}</h3>
 
         <h3>Checkout</h3>
         <form onSubmit={this.handleCheckoutSubmit} id="checkout">
