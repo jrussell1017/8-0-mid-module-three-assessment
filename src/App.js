@@ -34,9 +34,9 @@ class App extends Component {
   handleCheckoutSubmit = (e) => {
    e.preventDefault();
     if(this.state.creditCardNumber.length !== 16) {
-      alert(`Input is not valid. (Credit Card)`)
+      alert(`Input is not valid. Credit card number is not valid`)
     } else if(this.state.zipCode.length !== 5) {
-      alert(`Input is not valid. (Zip Code)`)
+      alert(`Input is not valid. Zip code is not valid.`)
     } else if(this.state.firstName.length === 0 || this.state.lastName === 0) {
       alert(`Input is not valid (Must enter name.)`)
     } else if(this.state.email.length === 0 ){
@@ -87,7 +87,7 @@ class App extends Component {
           <br />
           <div>{ formatPrice(price) }</div>
           <br />
-          <button onClick={()=>this.handleAddToCart(product)}>Add To Cart</button>
+          <button type="submit" onClick={()=>this.handleAddToCart(product)}>Add To Cart</button>
           <img src={ img } alt="product image"/>
           <br />
           <div>{ description }</div>
