@@ -1,6 +1,8 @@
 import { Component } from "react";
 import "./App.css";
 import data from "./data/productData"
+import formatPrice from "./helpers/formatPrice";
+
 
 class App extends Component {
   constructor() {
@@ -10,6 +12,7 @@ class App extends Component {
       cart: [],
       totalPrice: 0,
       tax: 0,
+      subtotal: 0,
       firstName: "",
       lastName: "",
       email: "",
@@ -22,19 +25,28 @@ class App extends Component {
     let newCartArr = [...this.state.cart, product]
     this.setState({
       cart: newCartArr,
-      totalPrice: this.state.totalPrice + product.price
-    })
-
-  }
-
-  handleCheckoutSubmit = () => {
-    let cartCheckoutArr = this.state.cart.map((product) => {
-      return(
-        <div></div>
-      )
+      subtotal: this.state.subtotal + product.price,
+      tax: this.state.subtotal * this.state.tax,
+      totalPrice: this.state.subtotal + this.state.tax
     })
   }
 
+  handleCheckoutSubmit = (e) => {
+   e.preventDefault();
+    if(this.state.creditCardNumber.length !== 16) {
+      alert(`Input is not valid. (Credit Card)`)
+    } else if(this.state.zipCode.length !== 5) {
+      alert(`Input is not valid. (Zip Code)`)
+    } else if(this.state.firstName.length === 0 || this.state.lastName === 0) {
+      alert(`Input is not valid (Must enter name.)`)
+    } else if(this.state.email.length === 0 ){
+      alert(`Input is not valid. (Must enter email)`)
+    } else {
+      alert(`Purchase complete! You will be charged $${formatPrice(this.state.totalPrice)}`)
+    }
+  }
+
+  
   handleFirstNameInput = (e) => {
     this.setState({
       firstName: e.target.value
@@ -70,18 +82,27 @@ class App extends Component {
     let productsArr = this.state.productsList.map((product) => {
       let { name, price, img, description} = product
       return(
-        <div className="product-info-container">
-          <div>Name: { name }</div>
+        <div key={ product.name } className="product-info-container">
+          <div>{ name }</div>
           <br />
-          <div>Price: { price }</div>
+          <div>{ formatPrice(price) }</div>
           <br />
           <button onClick={()=>this.handleAddToCart(product)}>Add To Cart</button>
           <img src={ img } alt="product image"/>
           <br />
-          <div>Description: { description }</div>
+          <div>{ description }</div>
         </div>
       )
     })
+
+    let checkoutCartArr = this.state.cart.map((product) => {
+      return(
+        <div key={ product.name }>
+          <li>{product.name, product.price}</li>
+        </div>
+      )
+    })
+
     return(
       <div>
         <h2>My Garage Sale</h2>
@@ -89,13 +110,13 @@ class App extends Component {
         <div id="product-list-container">{ productsArr }</div>
 
         <h2>Cart</h2>
-        <ul></ul>
-        <h3>Subtotal: </h3>
-        <h3>Tax: </h3>
-        <h3>Total: </h3>
+        <ul>{checkoutCartArr}</ul>
+        <h3>Subtotal: {formatPrice(this.state.subtotal)}</h3>
+        <h3>Tax: {formatPrice(this.state.tax)}</h3>
+        <h3>Total: {formatPrice((this.state.subtotal + this.state.totalPrice))}</h3>
 
         <h3>Checkout</h3>
-        <form onSubmit="">
+        <form onSubmit={this.handleCheckoutSubmit} id="checkout">
           <label htmlFor="first-name">First Name: </label>
           <input 
           onInput={this.handleFirstNameInput}
@@ -129,7 +150,7 @@ class App extends Component {
         <label htmlFor="card-info">Credit Card: </label>
           <input 
           onInput={this.handleCreditCardInput}
-          type="number"
+          type="text"
           name="card-info"
           value={this.creditCardNumber}
           id="card-info"
